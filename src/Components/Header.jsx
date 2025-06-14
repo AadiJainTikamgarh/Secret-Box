@@ -18,7 +18,7 @@ const Header = () => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-[#4212de] text-white shadow-lg sticky top-0 z-10 mb-10"
+      className="bg-[#4212de] text-white shadow-lg sticky top-0 z-10 "
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center py-4">
