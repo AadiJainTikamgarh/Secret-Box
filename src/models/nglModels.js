@@ -1,4 +1,4 @@
-import mongoose, {Schema} from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 const nglSchema = new mongoose.Schema({
     question: {
@@ -8,19 +8,19 @@ const nglSchema = new mongoose.Schema({
     },
     isActive: {
         type: Boolean,
-        default : true
+        default: true
     },
     response: [{
         type: Schema.Types.ObjectId,
-        ref:"nglresponse"
+        ref: "nglresponse"
 
     }],
     owner: {
         type: Schema.Types.ObjectId,
-        ref:"users"
+        ref: "users"
     }
-},{timestamps: true})
+}, { timestamps: true })
 
-const NGL  = mongoose.models.ngl || mongoose.model("ngl", nglSchema)
+const NGL = mongoose.models.ngl || mongoose.model("ngl", nglSchema)
 
-export {NGL}
+export { NGL }

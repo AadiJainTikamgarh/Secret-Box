@@ -4,13 +4,12 @@ import styled from 'styled-components';
 import { signIn } from 'next-auth/react'
 import { useSession } from 'next-auth/react';
 
-
 const Form = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+
   });
-  const [showPassword, setShowPassword] = useState(true);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,35 +21,28 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-
-
-
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    try {
+      
+    } catch (error) {
+      console.log("Failed to send data",error.message)
+    }
+    
   };
 
   const session = useSession()
-  console.log(session.data)
+  const isGoogleLogin = Boolean(session?.data?.user);
+    const dataToSend = isGoogleLogin
+    ? {
+        ...session.data.user,
+        googleLogin: true,
+      }
+    : formData;
+  console.log(dataToSend)
+
 
   return (
     <StyledWrapper>
       <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]">
-        <input
-          checked={!showPassword}
-          onChange={togglePasswordVisibility}
-          className="blind-check"
-          type="checkbox"
-          id="blind-input"
-          name="blindcheck"
-          hidden
-        />
-        <label htmlFor="blind-input" className="blind_input">
-          <span className="hide">Hide</span>
-          <span className="show">Show</span>
-        </label>
         <div className="form">
           <div className="title text-center">Sign Up</div>
           <label className="label_input" htmlFor="email-input">Email</label>
@@ -71,7 +63,7 @@ const Form = () => {
           <input
             spellCheck="false"
             className="input"
-            type={showPassword ? "text" : "password"}
+            type="password"
             name="password"
             id="password-input"
             value={formData.password}
@@ -80,8 +72,24 @@ const Form = () => {
             placeholder='password'
           />
           <button className="submit bg-[#4212de]" type="button" onClick={handleSubmit}>Submit</button>
+
+          <button className="flex items-center justify-center mt-3 bg-blue-500 text-white font-semibold p-1 px-2 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 w-[100%]"
+            onClick={signIn}>
+            <span className="text-sm font-medium tracking-wide mx-3 ml-7">
+              SIGN IN WITH GOOGLE
+            </span>
+            <div className="bg-white rounded-md p-2 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+              </svg>
+            </div>
+          </button>
         </div>
-        <label htmlFor="blind-input" className="avatar">
+
+        <label className="avatar">
           <svg xmlns="http://www.w3.org/2000/svg" width={35} height={35} viewBox="0 0 64 64" id="monkey">
             <ellipse cx="53.7" cy={33} rx="8.3" ry="8.2" fill="#89664c" />
             <ellipse cx="53.7" cy={33} rx="5.4" ry="5.4" fill="#ffc5d3" />
@@ -109,7 +117,6 @@ const Form = () => {
           </svg>
         </label>
 
-        <button onClick={signIn} className='bg-black'>Signin</button>
       </div>
     </StyledWrapper>
   );
@@ -123,7 +130,6 @@ const StyledWrapper = styled.div`
     --input-px: 0.75rem;
     --input-py: 0.65rem;
     --submit-h: 38px;
-    --blind-w: 64px;
     --space-y: 0.5rem;
     width: var(--w-form);
     height: var(--h-form);
@@ -195,22 +201,17 @@ const StyledWrapper = styled.div`
     border: 0;
     border-bottom: calc(var(--sz-svg) * (4 / 100)) solid #3c302a;
     bottom: 20%;
-
     position: absolute;
     transition: all 0.2s ease;
     z-index: 3;
   }
-  .blind-check:checked ~ .avatar::before {
-    width: calc(var(--sz-svg) * (9 / 100));
-    height: 0;
-    border-radius: 50%;
-    border-bottom: calc(var(--sz-svg) * (10 / 100)) solid #3c302a;
-  }
+
   .avatar svg#monkey .monkey-eye-r,
   .avatar svg#monkey .monkey-eye-l {
     animation: blink 10s 1s infinite;
     transition: all 0.2s ease;
   }
+  
   @keyframes blink {
     0%,
     2%,
@@ -231,14 +232,19 @@ const StyledWrapper = styled.div`
       cy: 30;
     }
   }
-  .blind-check:checked ~ .avatar svg#monkey .monkey-eye-r,
-  .blind-check:checked ~ .avatar svg#monkey .monkey-eye-l {
+
+  /* Monkey closes eyes when password field is focused */
+  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-r,
+  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-l {
     ry: 0.5;
     cy: 30;
+    animation: none;
   }
-  .blind-check:checked ~ .avatar svg#monkey-hands {
+
+  .form:has(#password-input:focus) ~ .avatar svg#monkey-hands {
     transform: translate3d(0, 0, 0) rotateX(0deg);
   }
+
   .avatar svg#monkey,
   .avatar::before,
   .avatar svg#monkey .monkey-eye-nose,
@@ -246,31 +252,16 @@ const StyledWrapper = styled.div`
   .avatar svg#monkey .monkey-eye-l {
     transition: all 0.2s ease;
   }
-  .blind-check:checked ~ .form:focus-within ~ .avatar svg#monkey,
-  .blind-check:checked ~ .form:focus-within ~ .avatar::before,
-  .blind-check:checked ~ .form:focus-within ~ .avatar svg#monkey .monkey-eye-nose,
-  .blind-check:checked ~ .form:focus-within ~ .avatar svg#monkey .monkey-eye-r,
-  .blind-check:checked ~ .form:focus-within ~ .avatar svg#monkey .monkey-eye-l {
-    animation: none;
-  }
+
   .form:focus-within ~ .avatar svg#monkey {
     animation: slick 3s ease infinite 1s;
     --center: rotateY(0deg);
     --left: rotateY(-4deg);
     --right: rotateY(4deg);
   }
+
   .form:focus-within ~ .avatar::before,
-  .form:focus-within ~ .avatar svg#monkey .monkey-eye-nose,
-  .blind-check:not(:checked)
-    ~ .form:focus-within
-    ~ .avatar
-    svg#monkey
-    .monkey-eye-r,
-  .blind-check:not(:checked)
-    ~ .form:focus-within
-    ~ .avatar
-    svg#monkey
-    .monkey-eye-l {
+  .form:focus-within ~ .avatar svg#monkey .monkey-eye-nose {
     ry: 3;
     cy: 35;
     animation: slick 3s ease infinite 1s;
@@ -278,6 +269,26 @@ const StyledWrapper = styled.div`
     --left: translateX(-0.5px);
     --right: translateX(0.5px);
   }
+
+  /* Only apply eye movement animation when NOT focusing on password */
+  .form:focus-within ~ .avatar svg#monkey .monkey-eye-r,
+  .form:focus-within ~ .avatar svg#monkey .monkey-eye-l {
+    ry: 3;
+    cy: 35;
+    animation: slick 3s ease infinite 1s;
+    --center: translateX(0);
+    --left: translateX(-0.5px);
+    --right: translateX(0.5px);
+  }
+
+  /* Override to keep eyes closed when password is focused */
+  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-r,
+  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-l {
+    ry: 0.5;
+    cy: 30;
+    animation: none;
+  }
+
   @keyframes slick {
     0%,
     100% {
@@ -289,48 +300,6 @@ const StyledWrapper = styled.div`
     75% {
       transform: var(--right);
     }
-  }
-
-  .card label.blind_input {
-    -webkit-user-select: none;
-    user-select: none;
-    cursor: pointer;
-    z-index: 4;
-    position: absolute;
-    border: none;
-    right: calc(var(--p) + (var(--input-px) / 2));
-    bottom: calc(
-      var(--p) + var(--submit-h) + var(--space-y) + (var(--input-py) / 1) + 3px
-    );
-    padding: 4px 0;
-    width: var(--blind-w);
-    border-radius: 4px;
-    background-color: #fff;
-    color: #4d4d4d;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .card label.blind_input:before {
-    content: "";
-    position: absolute;
-    left: calc((var(--input-px) / 2) * -1);
-    top: 0;
-    height: 100%;
-    width: 1px;
-    background: #8f8f8f;
-  }
-  .card label.blind_input:hover {
-    color: #262626;
-    background-color: #f2f2f2;
-  }
-  .blind-check ~ label.blind_input span.show,
-  .blind-check:checked ~ label.blind_input span.hide {
-    display: none;
-  }
-  .blind-check ~ label.blind_input span.hide,
-  .blind-check:checked ~ label.blind_input span.show {
-    display: block;
   }
 
   .form {
@@ -383,19 +352,19 @@ const StyledWrapper = styled.div`
     margin: var(--space-y) 0;
     transition: all 0.25s ease;
   }
-  .form .input#password-input {
-    padding-right: calc(var(--blind-w) + var(--input-px) + 4px);
-  }
+
   .form .input:focus {
     border: 1px solid #4212de;
     outline: 0;
     box-shadow: 0 0 0 2px #4212de;
   }
+
   .form .frg_pss {
     width: 100%;
     display: inline-flex;
     align-items: center;
   }
+
   .form .frg_pss a {
     background-color: transparent;
     cursor: pointer;
@@ -405,6 +374,7 @@ const StyledWrapper = styled.div`
     font-weight: 500;
     float: right;
   }
+
   .form .frg_pss a:hover {
     color: #000;
   }
@@ -436,6 +406,7 @@ const StyledWrapper = styled.div`
     appearance: button;
     margin: var(--space-y) 0 0;
   }
+
   .form .submit:hover {
     background-image: linear-gradient(
       -180deg,
@@ -444,11 +415,6 @@ const StyledWrapper = styled.div`
     );
     border: 1px solid rgba(22, 22, 22, 0.2);
     color: #fff;
-  }
-
-  .blind-check:checked ~ .form .input[type="text"] {
-    /* text-emphasis: circle; */
-    -webkit-text-security: disc;
   }
 `;
 
