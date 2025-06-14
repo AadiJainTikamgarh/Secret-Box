@@ -8,7 +8,7 @@ dbConnect();
 export async function POST(request) {
     try {
         const body = await request.json()
-        const { email, password, googleLogin, name, image } = body
+        const { email, password } = body
 
         if (!email || !password) {
             return NextResponse.json(
@@ -29,54 +29,35 @@ export async function POST(request) {
         }
 
         let token = undefined
-        if (googleLogin) {
 
-            const newUser = new User({
-                name: name || undefined,
-                email,
-                photo: image,
-            })
-            
-            token = newUser.generateRefreshToken()
-            newUser.refreshToken = token;
-            
-            const savedUser = await newUser.save()
-            console.log("User created:", savedUser._id);
 
-            return NextResponse.json(
-                {
-                    message: "User created successfully",
-                    success: true
-                },
-                { status: 201 }
-            );
-        } else {
-            const newUser = new User({
+        const newUser = new User({
 
-                email,
-                password,
-                
-            })
-            // console.log(newUser)
-            token = newUser.generateRefreshToken();
-            newUser.refreshToken = token;
-            const savedUser = await newUser.save()
-            // console.log(token)
+            email,
+            password,
 
-            console.log("User created:", savedUser._id);
-            const response = NextResponse.json(
-                {
-                    message: "User created successfully",
-                    success: true
-                },
-                { status: 201 }
-            )
+        })
+        // console.log(newUser)
+        token = newUser.generateRefreshToken();
+        newUser.refreshToken = token;
+       
+        const savedUser = await newUser.save()
+        console.log(token)
 
-            response.cookies.set("token", token, { httpOnly: true });
+        console.log("User created:", savedUser._id);
+        const response = NextResponse.json(
+            {
+                message: "User created successfully",
+                success: true
+            },
+            { status: 201 }
+        )
 
-            return response
+        response.cookies.set("token", token, { httpOnly: true });
 
-        }
+        return response
+
+
 
     } catch (error) {
 
