@@ -1,4 +1,4 @@
-import mongoose, { Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -43,21 +43,31 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.method.isPasswordMatch = async function (password) {
+userSchema.methods.isPasswordMatch = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-userSchema.method.generateRefeshToken = async function () {
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       id: this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expireIn: process.env.REFRESH_TOKEN_EXPIRE }
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRE }
   );
 };
 
-userSchema.method.generateAccessToken = async function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       id: this._id,
@@ -65,7 +75,7 @@ userSchema.method.generateAccessToken = async function () {
       name: this.name,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expireIn: process.env.ACCESS_TOKEN_EXPIRE }
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRE }
   );
 };
 

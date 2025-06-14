@@ -7,7 +7,7 @@ import { User } from "@/models/userModels";
 dbConnect();
 export async function POST(request) {
     try {
-        const body = request.json()
+        const body = await request.json()
         const { email, password, googleLogin, name, image } = body
 
         if (!email || !password) {
@@ -17,7 +17,7 @@ export async function POST(request) {
             );
         }
 
-        console.log("Signup request:", { username, email });
+        console.log("Signup request:", { email, password });
 
         const user = await User.findOne({ email })
 
@@ -28,16 +28,21 @@ export async function POST(request) {
             );
         }
 
+        let token = undefined
         if (googleLogin) {
+
             const newUser = new User({
-                name,
+                name: name || undefined,
                 email,
                 photo: image,
-                refreshToken: await this.generateRefreshToken(),
-                accessToken: await this.generateAccessToken()
             })
+            
+            token = newUser.generateRefreshToken()
+            newUser.refreshToken = token;
+            
             const savedUser = await newUser.save()
             console.log("User created:", savedUser._id);
+
             return NextResponse.json(
                 {
                     message: "User created successfully",
@@ -50,18 +55,26 @@ export async function POST(request) {
 
                 email,
                 password,
-                refreshToken: await this.generateRefreshToken(),
-                accessToken: await this.generateAccessToken()
+                
             })
+            // console.log(newUser)
+            token = newUser.generateRefreshToken();
+            newUser.refreshToken = token;
             const savedUser = await newUser.save()
+            // console.log(token)
+
             console.log("User created:", savedUser._id);
-            return NextResponse.json(
+            const response = NextResponse.json(
                 {
                     message: "User created successfully",
                     success: true
                 },
                 { status: 201 }
-            );
+            )
+
+            response.cookies.set("token", token, { httpOnly: true });
+
+            return response
 
         }
 
@@ -69,7 +82,7 @@ export async function POST(request) {
 
         return NextResponse.json(
             { error: error.message || "Internal Server Error" },
-            { ststus: 404 }
+            { status: 404 }
         )
     }
 }
