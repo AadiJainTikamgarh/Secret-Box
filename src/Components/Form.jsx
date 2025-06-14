@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { signIn } from 'next-auth/react'
 import { useSession } from 'next-auth/react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+
 
 const Form = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -19,25 +23,30 @@ const Form = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
+      const respose = await axios.post("/api/user/signup", dataToSend)
+      console.log("SignUp succesful ", response.data)
+      router.push("/")
     } catch (error) {
-      console.log("Failed to send data",error.message)
+      console.log("Failed to send data", error.message)
     }
-    
+
   };
 
   const session = useSession()
   const isGoogleLogin = Boolean(session?.data?.user);
-    const dataToSend = isGoogleLogin
+  const dataToSend = isGoogleLogin
     ? {
-        ...session.data.user,
-        googleLogin: true,
-      }
+      ...session.data.user,
+      googleLogin: true,
+    }
     : formData;
   console.log(dataToSend)
+  if (isGoogleLogin) {
+    handleSubmit();
+  }
 
 
   return (
