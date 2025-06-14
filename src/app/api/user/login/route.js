@@ -18,16 +18,20 @@ export async function POST(request) {
         }
 
         console.log("Login request:", { email, password });
-        const user = mongoose.findOne({ email })
+        const user = await User.findOne({ email })
         if (!user) {
             return NextResponse.json(
                 { error: "No User found with this email. Try to SignUp first." },
-                { ststus: 402 }
+                { status: 402 }
             )
         }
 
+
         //password checking
         const isPasswordValid = await user.isPasswordMatch(password);
+
+
+
 
         if (!isPasswordValid) {
             return NextResponse.json(
@@ -50,21 +54,19 @@ export async function POST(request) {
             nglToken: user.nglToken
         };
 
-
+        
         const response = NextResponse.json(
             {
                 message: "Login successful",
                 user: userResponse,
-                accessToken,
                 refreshToken
             },
             { status: 200 }
         );
-
         response.cookies.set("token", refreshToken, { httpOnly: true })
 
         return response
-        
+
     } catch (error) {
         return NextResponse.json(
             { error: error.message || "Internal Server Error" },
