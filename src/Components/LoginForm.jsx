@@ -24,7 +24,7 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/user/signup", formData);
+      const response = await axios.post("/api/user/login", formData);
       console.log("SignUp succesful ", response.data);
       router.push("/");
     } catch (error) {

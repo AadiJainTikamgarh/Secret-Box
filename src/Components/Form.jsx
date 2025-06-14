@@ -22,7 +22,7 @@ const Form = () => {
   };
 
   const handleSubmit = async (e) => {
-    // e.preventDefault();
+    
     try {
       const response = await axios.post("/api/user/signup", dataToSend);
       console.log("SignUp succesfully ", response.data);
