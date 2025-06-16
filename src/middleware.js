@@ -13,6 +13,10 @@ export function middleware(request) {
         // const data = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
         return NextResponse.redirect(new URL("/", request.url))
     }
+
+    if(path === "/" && !token){
+      return NextResponse.redirect(new URL("/login", request.url))
+    }
 }
 
 // See "Matching Paths" below to learn more
