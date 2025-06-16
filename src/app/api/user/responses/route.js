@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import axios from "axios";
+import { getUserViaToken } from "@/helper/getUserViaToken";
 import { dbConnect } from "@/dbconfig/dbconnect";
 import { User } from "@/models/userModels";
 import mongoose from "mongoose";
@@ -8,14 +8,7 @@ dbConnect();
 
 export async function GET(request){
     try {
-        
-        try {
-            const user = await axios.get("/api/user/me");
-            const userId = user?.userId;
-        } catch (error) {
-            console.log("Failed in fetching userId : ", userId);
-            return NextResponse.json({error: error?.message}, {status: 404})
-        }
+        let userId = await getUserViaToken()
 
         const messages = await User.aggregate({
             $match: {
