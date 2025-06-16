@@ -1,17 +1,37 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "react-hot-toast";
 
 const Form = () => {
   const router = useRouter();
+  const passwordInputRef = useRef(null);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  // Handle password field focus/blur for monkey animation
+  useEffect(() => {
+    const passwordInput = passwordInputRef.current;
+    if (!passwordInput) return;
+
+    const handleFocus = () => setIsPasswordFocused(true);
+    const handleBlur = () => setIsPasswordFocused(false);
+
+    passwordInput.addEventListener('focus', handleFocus);
+    passwordInput.addEventListener('blur', handleBlur);
+
+    return () => {
+      passwordInput.removeEventListener('focus', handleFocus);
+      passwordInput.removeEventListener('blur', handleBlur);
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,71 +41,162 @@ const Form = () => {
     }));
   };
 
+  const validateForm = () => {
+    if (!formData.email?.trim()) {
+      toast.error("Email is required");
+      document.getElementById('email-input')?.focus();
+      return false;
+    }
+    
+    if (!formData.password?.trim()) {
+      toast.error("Password is required");
+      document.getElementById('password-input')?.focus();
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      toast.error("Please enter a valid email address");
+      document.getElementById('email-input')?.focus();
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      document.getElementById('password-input')?.focus();
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
+    
     try {
-      const response = await axios.post("/api/user/signup", formData);
+      console.log("Attempting signup with data:", formData);
+      
+      const response = await axios.post("/api/user/signup", {
+        email: formData.email.trim(),
+        password: formData.password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000, // 10 second timeout
+      });
+      
       toast.success("SignUp successfully");
-      console.log("SignUp succesfully ", response.data);
-      router.push("/");
+      console.log("SignUp successfully ", response.data);
+      
+      // Clear form
+      setFormData({ email: "", password: "" });
+      
+      // Redirect after short delay
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
+      
     } catch (error) {
-      console.log("Failed to send data", error.message);
-      if (error.status === 404) {
+      console.error("Signup error:", error);
+      
+      const status = error.response?.status || error.status;
+      const message = error.response?.data?.message || error.message;
+      
+      console.error("Error details:", {
+        status,
+        message,
+        fullError: error.response || error
+      });
+      
+      if (status === 404 || status === 400) {
         toast("Email and password required", {
           icon: "❗",
         });
-      } else if (error.status === 401) {
-        toast("User already exist", {
+      } else if (status === 401 || status === 409) {
+        toast("User already exists", {
           icon: "❗",
         });
+      } else if (status === 422) {
+        toast("Invalid email or password format", {
+          icon: "❗",
+        });
+      } else if (error.code === 'ECONNABORTED') {
+        toast.error("Request timeout. Please try again.");
+      } else if (!navigator.onLine) {
+        toast.error("No internet connection");
       } else {
-        toast.error("Something went wrong");
+        toast.error("Something went wrong. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <StyledWrapper>
-      <Toaster />
+    <StyledWrapper isPasswordFocused={isPasswordFocused}>
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
       <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]">
         <div className="form">
-          <div className="title text-center">Sign Up</div>
-          <label className="label_input" htmlFor="email-input">
-            Email
-          </label>
-          <input
-            spellCheck="false"
-            className="input"
-            type="email"
-            name="email"
-            id="email-input"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-            placeholder="a@gmail.com"
-          />
-          <div className="frg_pss">
-            <label className="label_input" htmlFor="password-input">
-              Password
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="title text-center">Sign Up</div>
+            <label className="label_input" htmlFor="email-input">
+              Email
             </label>
-          </div>
-          <input
-            spellCheck="false"
-            className="input"
-            type="password"
-            name="password"
-            id="password-input"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-            placeholder="password"
-          />
-          <button
-            className="submit bg-[#4212de]"
-            type="button"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
+            <input
+              spellCheck="false"
+              className="input"
+              type="email"
+              name="email"
+              id="email-input"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              placeholder="your@email.com"
+              disabled={isLoading}
+              autoComplete="email"
+            />
+            <div className="frg_pss">
+              <label className="label_input" htmlFor="password-input">
+                Password
+              </label>
+            </div>
+            <input
+              ref={passwordInputRef}
+              spellCheck="false"
+              className="input"
+              type="password"
+              name="password"
+              id="password-input"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter your password"
+              disabled={isLoading}
+              autoComplete="new-password"
+              minLength="6"
+            />
+            <button
+              className="submit bg-[#4212de]"
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing Up..." : "Submit"}
+            </button>
+          </form>
         </div>
 
         <label className="avatar">
@@ -211,6 +322,7 @@ const StyledWrapper = styled.div`
     align-items: center;
     --sz-svg: calc(var(--sz-avatar) - 10px);
   }
+  
   .avatar svg {
     position: absolute;
     transition: transform 0.2s ease-in, opacity 0.1s;
@@ -219,12 +331,16 @@ const StyledWrapper = styled.div`
     width: var(--sz-svg);
     pointer-events: none;
   }
+  
   .avatar svg#monkey {
     z-index: 1;
   }
+  
   .avatar svg#monkey-hands {
     z-index: 2;
+    -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
+    -webkit-transform: translateY(calc(var(--sz-avatar) / 1.25)) rotateX(-21deg);
     transform: translateY(calc(var(--sz-avatar) / 1.25)) rotateX(-21deg);
   }
 
@@ -243,41 +359,49 @@ const StyledWrapper = styled.div`
 
   .avatar svg#monkey .monkey-eye-r,
   .avatar svg#monkey .monkey-eye-l {
+    -webkit-animation: blink 10s 1s infinite;
+    -moz-animation: blink 10s 1s infinite;
     animation: blink 10s 1s infinite;
     transition: all 0.2s ease;
   }
 
   @keyframes blink {
-    0%,
-    2%,
-    4%,
-    26%,
-    28%,
-    71%,
-    73%,
-    100% {
+    0%, 2%, 4%, 26%, 28%, 71%, 73%, 100% {
       ry: 4.5;
       cy: 31.7;
     }
-    1%,
-    3%,
-    27%,
-    72% {
+    1%, 3%, 27%, 72% {
       ry: 0.5;
       cy: 30;
     }
   }
 
-  /* Monkey closes eyes when password field is focused */
-  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-r,
-  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-l {
-    ry: 0.5;
-    cy: 30;
-    animation: none;
-  }
+  /* JavaScript-controlled password focus state */
+  ${props => props.isPasswordFocused && `
+    .avatar svg#monkey .monkey-eye-r,
+    .avatar svg#monkey .monkey-eye-l {
+      ry: 0.5;
+      cy: 30;
+      animation: none;
+    }
+    
+    .avatar svg#monkey-hands {
+      transform: translate3d(0, 0, 0) rotateX(0deg);
+    }
+  `}
 
-  .form:has(#password-input:focus) ~ .avatar svg#monkey-hands {
-    transform: translate3d(0, 0, 0) rotateX(0deg);
+  /* Fallback for browsers that support :has() */
+  @supports selector(:has(*)) {
+    .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-r,
+    .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-l {
+      ry: 0.5;
+      cy: 30;
+      animation: none;
+    }
+
+    .form:has(#password-input:focus) ~ .avatar svg#monkey-hands {
+      transform: translate3d(0, 0, 0) rotateX(0deg);
+    }
   }
 
   .avatar svg#monkey,
@@ -305,7 +429,6 @@ const StyledWrapper = styled.div`
     --right: translateX(0.5px);
   }
 
-  /* Only apply eye movement animation when NOT focusing on password */
   .form:focus-within ~ .avatar svg#monkey .monkey-eye-r,
   .form:focus-within ~ .avatar svg#monkey .monkey-eye-l {
     ry: 3;
@@ -316,17 +439,8 @@ const StyledWrapper = styled.div`
     --right: translateX(0.5px);
   }
 
-  /* Override to keep eyes closed when password is focused */
-  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-r,
-  .form:has(#password-input:focus) ~ .avatar svg#monkey .monkey-eye-l {
-    ry: 0.5;
-    cy: 30;
-    animation: none;
-  }
-
   @keyframes slick {
-    0%,
-    100% {
+    0%, 100% {
       transform: var(--center);
     }
     25% {
@@ -345,6 +459,13 @@ const StyledWrapper = styled.div`
     justify-content: space-evenly;
     flex-direction: column;
     width: 100%;
+  }
+
+  .form form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .form .title {
@@ -394,6 +515,12 @@ const StyledWrapper = styled.div`
     box-shadow: 0 0 0 2px #4212de;
   }
 
+  .form .input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
   .form .frg_pss {
     width: 100%;
     display: inline-flex;
@@ -440,9 +567,10 @@ const StyledWrapper = styled.div`
     -webkit-appearance: button;
     appearance: button;
     margin: var(--space-y) 0 0;
+    transition: all 0.25s ease;
   }
 
-  .form .submit:hover {
+  .form .submit:hover:not(:disabled) {
     background-image: linear-gradient(
       -180deg,
       rgba(255, 255, 255, 0.18) 0%,
@@ -450,6 +578,12 @@ const StyledWrapper = styled.div`
     );
     border: 1px solid rgba(22, 22, 22, 0.2);
     color: #fff;
+  }
+
+  .form .submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+    background-color: #666;
   }
 `;
 
