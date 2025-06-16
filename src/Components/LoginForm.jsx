@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "react-hot-toast";
 
 const Form = () => {
   const router = useRouter();
@@ -25,15 +26,30 @@ const Form = () => {
     
     try {
       const response = await axios.post("/api/user/login", formData);
+      toast.success("Login Successfully")
       console.log("Login succesful ", response.data);
       router.push("/");
     } catch (error) {
+      if(error.status === 401){
+        toast.error("Invalid login credentials")
+      }else if (error.status === 404){
+        toast("User not found", {
+          icon: "❗",
+        });
+      }else if(error.status === 403){
+        toast("Email and password required", {
+          icon: "❗"
+        });
+      }else{
+        toast.error("Something went wrong")
+      }
       console.log("Failed to send data", error.message);
     }
   };
 
   return (
     <StyledWrapper>
+      <Toaster/>
       <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]">
         <div className="form">
           <div className="title text-center">Login</div>

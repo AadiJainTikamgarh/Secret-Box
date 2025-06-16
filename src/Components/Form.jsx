@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "react-hot-toast";
 
 const Form = () => {
   const router = useRouter();
@@ -21,20 +22,30 @@ const Form = () => {
   };
 
   const handleSubmit = async (e) => {
-    
     try {
       const response = await axios.post("/api/user/signup", formData);
+      toast.success("SignUp successfully");
       console.log("SignUp succesfully ", response.data);
       router.push("/");
     } catch (error) {
       console.log("Failed to send data", error.message);
+      if (error.status === 404) {
+        toast("Email and password required", {
+          icon: "❗",
+        });
+      } else if (error.status === 401) {
+        toast("User already exist", {
+          icon: "❗",
+        });
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
-  
-
   return (
     <StyledWrapper>
+      <Toaster />
       <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]">
         <div className="form">
           <div className="title text-center">Sign Up</div>
@@ -75,8 +86,6 @@ const Form = () => {
           >
             Submit
           </button>
-
-          
         </div>
 
         <label className="avatar">

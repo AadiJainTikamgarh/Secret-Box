@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Header from "@/Components/Header";
 import Footer from "@/Components/Footer";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter();
@@ -49,9 +50,11 @@ export default function Home() {
   const logout = async () => {
     try {
       await axios.get("/api/user/logout");
+      toast.success("Logout successfully")
       router.push('/login');
     } catch (error) {
       console.log("Error in LoggingOut", error);
+      toast.error("Something went wrong")
     }
   };
 
@@ -122,6 +125,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Toaster/>
       <Header />
       
       

@@ -13,7 +13,7 @@ export async function POST(request) {
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Please Provide Both Details" },
-                { status: 401 }
+                { status: 403 }
             )
         }
 
@@ -22,7 +22,7 @@ export async function POST(request) {
         if (!user) {
             return NextResponse.json(
                 { error: "No User found with this email. Try to SignUp first." },
-                { status: 402 }
+                { status: 404 }
             )
         }
 
@@ -70,7 +70,7 @@ export async function POST(request) {
     } catch (error) {
         return NextResponse.json(
             { error: error.message || "Internal Server Error" },
-            { status: 404 }
+            { status: 500 }
         )
     }
 }

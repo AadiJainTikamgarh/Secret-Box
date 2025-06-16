@@ -13,7 +13,7 @@ export async function POST(request) {
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Please provide all required fields" },
-                { status: 400 }
+                { status: 404 }
             );
         }
 
@@ -24,7 +24,7 @@ export async function POST(request) {
         if (user) {
             return NextResponse.json(
                 { error: "User already exists" },
-                { status: 400 }
+                { status: 401 }
             );
         }
 
@@ -63,7 +63,7 @@ export async function POST(request) {
 
         return NextResponse.json(
             { error: error.message || "Internal Server Error" },
-            { status: 404 }
+            { status: 500 }
         )
     }
 }
