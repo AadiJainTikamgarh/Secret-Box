@@ -25,10 +25,18 @@ const userSchema = new mongoose.Schema({
   },
   refreshToken: String,
   accessToken: String,
-  nglToken: [
+  nglResponse: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "ngl",
+      response: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+      }
     },
   ],
 });
@@ -47,8 +55,6 @@ userSchema.methods.isPasswordMatch = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-
-
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
@@ -56,18 +62,6 @@ userSchema.methods.generateRefreshToken = function () {
     },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRE }
-  );
-};
-
-userSchema.methods.generateAccessToken = function () {
-  return jwt.sign(
-    {
-      id: this._id,
-      email: this.email,
-      name: this.name,
-    },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRE }
   );
 };
 
