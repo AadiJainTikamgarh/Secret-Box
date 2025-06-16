@@ -102,7 +102,7 @@ const page = () => {
                 viewport={{ once: true }}
                 variants={staggerContainer}
             >
-                <motion.div className="max-w-6xl mx-auto" variants={fadeInUp}>
+                <motion.div className="max-w-6xl mx-auto" variants={fadeInUp} id='about'>
                     <h3 className="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-800">
                         How Secret Box Works
                     </h3>
@@ -256,7 +256,7 @@ const page = () => {
                 viewport={{ once: true }}
                 variants={staggerContainer}
             >
-                <motion.div className="max-w-4xl mx-auto text-center" variants={fadeInUp}>
+                <motion.div className="max-w-4xl mx-auto text-center" variants={fadeInUp} id='team'>
                     <h3 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
                         Meet the Developers
                     </h3>

@@ -50,7 +50,7 @@ const Form = () => {
   return (
     <StyledWrapper>
       <Toaster/>
-      <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]">
+      <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)] overflow-x-hidden">
         <div className="form">
           <div className="title text-center">Login</div>
           <label className="label_input" htmlFor="email-input">
@@ -91,7 +91,7 @@ const Form = () => {
             Submit
           </button>
 
-          
+          <div className="text-lg">Dont't have an account. <a href="/signup" className="text-[#4212de] underline">SignUp</a></div>
         </div>
 
         <label className="avatar">

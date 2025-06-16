@@ -18,10 +18,10 @@ const Page = ({ params }) => {
             id: params.nglId
         }
         try {
-            const response = await axios.post("/api/user/nglresponse",data)
-            
+            const response = await axios.post("/api/user/nglresponse", data)
+
         } catch (error) {
-            console.log("Error in Sending Message . Try Again Later",error)
+            console.log("Error in Sending Message . Try Again Later", error)
         }
 
 
@@ -132,16 +132,25 @@ const Page = ({ params }) => {
                                     disabled={!message.trim()}
                                     onClick={handleButtonClick}
                                     className={`w-full py-5 px-8 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 ${!message.trim()
-                                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                            : 'bg-[#4212de] hover:bg-[#3010b8] text-gray-50 shadow-md hover:shadow-lg'
+                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                        : 'bg-[#4212de] hover:bg-[#3010b8] text-gray-50 shadow-md hover:shadow-lg'
                                         }`}
                                 >
                                     <Send className='w-5 h-5' />
                                     Send Anonymous Message
                                 </button>
+
                             </form>
                         </motion.div>
                     </motion.div>
+                                <a href="/home">
+                                    <button
+                                        className="bg-[#122dde]  text-gray-50 shadow-md hover:shadow-lg w-full py-5 px-8 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 mb-5"
+                                    >
+                                        <Send className='w-5 h-5' />
+                                        Create your Anonymous message Link
+                                    </button>
+                                </a>
 
                     <motion.div variants={itemVariants}>
                         <h3 className='text-2xl font-semibold text-gray-900 text-center mb-12'>

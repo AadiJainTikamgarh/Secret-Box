@@ -1,46 +1,34 @@
 import React from 'react';
-import { MapPin, Phone, Printer, User, Settings } from 'lucide-react';
+import { MapPin, Mail, Printer, User, Settings } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer className="bg-[#4212de] text-white py-12 px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-8">
           
           <div>
             <h3 className="text-white text-xl font-semibold mb-6">CONTACT US</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-purple-200 mt-1 flex-shrink-0" />
-                <p className="text-purple-100 leading-relaxed">
-                  Link Road Number 3, Near Kali Mata Mandir, Bhopal, Madhya Pradesh, India 462003
+                <p className="text-purple-100 leading-relaxed max-w-md">
+                  Maulana Azad National Institute of Technology (MANIT) , Bhopal, Madhya Pradesh, India 462003
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-purple-200 flex-shrink-0" />
-                <p className="text-purple-100">+91 755 4051000, 4052000</p>
+                <Mail className="w-5 h-5 text-purple-200 flex-shrink-0" />
+                <p className="text-purple-100">saumyakhushlani9@gmail.com</p>
               </div>
               <div className="flex items-center gap-3">
-                <Printer className="w-5 h-5 text-purple-200 flex-shrink-0" />
-                <p className="text-purple-100">+91-755 2670562</p>
+                <Mail className="w-5 h-5 text-purple-200 flex-shrink-0" />
+                <p className="text-purple-100">AadiJainTikamgarh@gmail.com</p>
               </div>
             </div>
           </div>
 
           
-          <div>
-            <h3 className="text-white text-xl font-semibold mb-6">COORDINATORS</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-purple-200 flex-shrink-0" />
-                <p className="text-purple-100"></p>
-              </div>
-              <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-purple-200 flex-shrink-0" />
-                <p className="text-purple-100"></p>
-              </div>
-            </div>
-          </div>
+         
 
           
           <div>
@@ -49,11 +37,11 @@ export default function Footer() {
               
               <div className="flex items-center gap-3">
                 <User className="w-5 h-5 text-purple-200 flex-shrink-0" />
-                <p className="text-purple-100"></p>
+                <p className="text-purple-100">Aadi Jain</p>
               </div>
               <div className="flex items-center gap-3">
-                <Settings className="w-5 h-5 text-purple-200 flex-shrink-0" />
-                <p className="text-purple-100"></p>
+                <User className="w-5 h-5 text-purple-200 flex-shrink-0" />
+                <p className="text-purple-100">Saumya Khushlani</p>
               </div>
             </div>
           </div>

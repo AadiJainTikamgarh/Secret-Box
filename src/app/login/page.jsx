@@ -5,7 +5,7 @@ import Footer from "@/Components/Footer";
 
 const page = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header />
       <div className="flex flex-col justify-center items-center px-4 py-10 bg-gradient-to-br from-[#4212de30] to-[#4212de05]">
         <LoginForm />

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useState } from 'react';
 import { FaHome, FaBook, FaInfoCircle, FaPhone, FaBars, FaTimes } from 'react-icons/fa';
-import { RiTeamFill } from "react-icons/ri";
+import { RiLoginBoxFill, RiTeamFill } from "react-icons/ri";
 import { FaDonate } from "react-icons/fa";
 
 const Header = () => {
@@ -40,19 +40,21 @@ const Header = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="hidden md:flex space-x-8"
           >
-            <Link href="/introduction" className="hover:text-[#FFD700] transition flex items-center gap-2">
+            <Link href="/home" className="  flex items-center gap-2">
               <FaHome /> Home
             </Link>
             
-            <Link href="/About" className="hover:text-[#FFD700] transition flex items-center gap-2">
+            <Link href="#about" className="  flex items-center gap-2">
               <FaInfoCircle /> About
             </Link>
-            <Link href="/team" className="hover:text-[#FFD700] transition flex items-center gap-2">
+            <Link href="#team" className="  flex items-center gap-2">
               < RiTeamFill />Team
             </Link>
-            <Link href="/contact" className="hover:text-[#FFD700] transition flex items-center gap-2">
-              <FaPhone /> Contact
+            <Link href="/login" className="  flex items-center gap-2">
+              < RiLoginBoxFill />Login
             </Link>
+            
+            
             
           </motion.nav>
 
@@ -76,23 +78,18 @@ const Header = () => {
           className={`md:hidden overflow-hidden ${isMenuOpen ? 'py-4' : ''}`}
         >
           <div className="flex flex-col space-y-4">
-            <Link href="/introduction" className="hover:text-[#FFD700] transition flex items-center gap-2">
+             <Link href="/home" className="  flex items-center gap-2">
               <FaHome /> Home
             </Link>
-            <Link href="/Resources" className="hover:text-[#FFD700] transition flex items-center gap-2">
-              <FaBook /> Resources
-            </Link>
-            <Link href="/About" className="hover:text-[#FFD700] transition flex items-center gap-2">
+            
+            <Link href="#about" className="  flex items-center gap-2">
               <FaInfoCircle /> About
             </Link>
-            <Link href="/team" className="hover:text-[#FFD700] transition flex items-center gap-2">
-            < RiTeamFill />Team
+            <Link href="/#team" className="  flex items-center gap-2">
+              < RiTeamFill />Team
             </Link>
-            <Link href="/contact" className="hover:text-[#FFD700] transition flex items-center gap-2">
-              <FaPhone /> Contact
-            </Link>
-            <Link href="/donation" className="hover:text-[#FFD700] transition flex items-center gap-2">
-              <FaDonate/>Donate
+            <Link href="/login" className="  flex items-center gap-2">
+              < RiLoginBoxFill />Login
             </Link>
           </div>
         </motion.nav>

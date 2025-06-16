@@ -187,3 +187,30 @@
     @apply bg-background text-foreground;
   }
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4212de;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:white;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+*::selection {
+  background-color:#4212de ;
+  color: white ;
+}
