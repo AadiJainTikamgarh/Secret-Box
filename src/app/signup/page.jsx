@@ -7,7 +7,7 @@ const page = () => {
   return (
     <div className='min-h-screen'>
      <Header/>
-    <div className='flex flex-col justify-center items-center px-4 py-10 bg-gradient-to-br from-[#4212de30] to-[#4212de05]'>
+    <div className='flex flex-col justify-center items-center px-4 py-10 bg-gradient-to-br from-[#4212de30] to-[#4212de05] min-h-[80vh]'>
       <Form/>
     </div>
     <Footer/>
