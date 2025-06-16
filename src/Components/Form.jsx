@@ -12,6 +12,7 @@ const Form = () => {
     email: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,33 +23,58 @@ const Form = () => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    
+    if (isSubmitting) return; // Prevent double submission
+    
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      toast("Email and password are required", {
+        icon: "❗",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
     try {
       const response = await axios.post("/api/user/signup", formData);
       toast.success("SignUp successfully");
-      console.log("SignUp succesfully ", response.data);
+      console.log("SignUp successfully ", response.data);
       router.push("/");
     } catch (error) {
-      console.log("Failed to send data", error.message);
-      if (error.status === 404) {
-        toast("Email and password required", {
-          icon: "❗",
-        });
-      } else if (error.status === 401) {
-        toast("User already exist", {
-          icon: "❗",
-        });
+      console.log("Failed to send data", error);
+      
+      // Better error handling
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 400 || status === 422) {
+          toast("Email and password required", {
+            icon: "❗",
+          });
+        } else if (status === 401 || status === 409) {
+          toast("User already exists", {
+            icon: "❗",
+          });
+        } else {
+          toast.error("Something went wrong");
+        }
+      } else if (error.request) {
+        toast.error("Network error. Please check your connection.");
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <StyledWrapper>
-      <Toaster />
-      <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]">
+   <StyledWrapper>
+      <Toaster/>
+      <form className="card shadow-[0_0_15px_rgba(0,0,0,0.4)]" onSubmit={handleSubmit}>
         <div className="form">
-          <div className="title text-center">Sign Up</div>
+          <div className="title text-center">SignUp</div>
           <label className="label_input" htmlFor="email-input">
             Email
           </label>
@@ -62,6 +88,7 @@ const Form = () => {
             onChange={handleInputChange}
             required
             placeholder="a@gmail.com"
+            disabled={isSubmitting}
           />
           <div className="frg_pss">
             <label className="label_input" htmlFor="password-input">
@@ -78,13 +105,14 @@ const Form = () => {
             onChange={handleInputChange}
             required
             placeholder="password"
+            disabled={isSubmitting}
           />
           <button
             className="submit bg-[#4212de]"
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
 
@@ -154,7 +182,7 @@ const Form = () => {
             />
           </svg>
         </label>
-      </div>
+      </form>
     </StyledWrapper>
   );
 };
@@ -394,6 +422,11 @@ const StyledWrapper = styled.div`
     box-shadow: 0 0 0 2px #4212de;
   }
 
+  .form .input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   .form .frg_pss {
     width: 100%;
     display: inline-flex;
@@ -442,7 +475,7 @@ const StyledWrapper = styled.div`
     margin: var(--space-y) 0 0;
   }
 
-  .form .submit:hover {
+  .form .submit:hover:not(:disabled) {
     background-image: linear-gradient(
       -180deg,
       rgba(255, 255, 255, 0.18) 0%,
@@ -450,6 +483,11 @@ const StyledWrapper = styled.div`
     );
     border: 1px solid rgba(22, 22, 22, 0.2);
     color: #fff;
+  }
+
+  .form .submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
