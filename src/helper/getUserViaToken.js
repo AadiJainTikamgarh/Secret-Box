@@ -1,8 +1,11 @@
-import jwt from 'json'
+import jwt from 'jsonwebtoken'
+import { cookies } from 'next/headers';
 
-export const getUserViaToken = (request) => {
+export const getUserViaToken =async (request) => {
   try {
-    const token = request.cookies.get("token")?.value || "";
+    const cookiesStore = await cookies();
+    const token = cookiesStore.get("token")?.value;
+    console.log(token)
     const decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
     return decodeToken.id;
