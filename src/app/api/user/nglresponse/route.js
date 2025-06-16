@@ -9,7 +9,7 @@ export async function POST(request){
         const{message,id}= body
 
         //Finding User
-        const user = await User.findByIdAndUpdate(id,{$push: {nglResponse : {response: message}}})
+        const user = await User.findByIdAndUpdate(id,{$push: {nglResponse : {response: message}}})
         if(!user){
             console.log(id)
             return NextResponse.json(

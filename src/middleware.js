@@ -11,7 +11,7 @@ export function middleware(request) {
 
     if(isPublicPath && token){
         // const data = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
-        return NextResponse.redirect(new URL("/", request.url))
+        return NextResponse.redirect(new URL("/home", request.url))
     }
 
     if(path === "/" && !token){
