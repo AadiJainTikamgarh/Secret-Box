@@ -10,26 +10,32 @@ export async function GET(request){
     try {
         let userId = await getUserViaToken()
 
-        const messages = await User.aggregate({
+        console.log(userId)
+        const messages = await User.aggregate(
+          [{
             $match: {
-                _id: new mongoose.Types.ObjectId(userId)
-            }
-        },{
-            $unwind: "$nglResponse"
-        },{
+              _id: new mongoose.Types.ObjectId(userId),
+            },
+          },
+          {
+            $unwind: "$nglResponse",
+          },
+          {
             $sort: {
-                "$nglResponse.createdAt": -1
-            }
-        },{
+              "nglResponse.createdAt": -1,
+            },
+          },
+          {
             $project: {
-                nglResponse: 1
-            }
-        })
+              nglResponse: 1,
+            },
+          }]
+        );
 
         return NextResponse.json({response: messages}, {status: 200})
 
     } catch (error) {
-        console.log("Something went wrong", error?.message)
-        return NextResponse.json({error: error?.message},{status: 500})
+        console.log("Something went wrong", error)
+        return NextResponse.json({error: error},{status: 500})
     }
 }

@@ -4,15 +4,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Copy, 
-  Share2, 
-  MessageCircle, 
-  Eye, 
-  X, 
-  LogOut, 
+import {
+  Copy,
+  Share2,
+  MessageCircle,
+  Eye,
+  X,
+  LogOut,
   Sparkles,
-  Link as LinkIcon
+  Link as LinkIcon,
 } from "lucide-react";
 import Header from "@/Components/Header";
 import Footer from "@/Components/Footer";
@@ -20,41 +20,38 @@ import { Toaster, toast } from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter();
+
   
   const [userId, setUserId] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hey, you're absolutely amazing! Keep shining bright! ✨"
-    },
-    {
-      id: 2,
-      text: "Your positive energy is contagious! Thanks for being you 💫"
-    },
-    {
-      id: 3,
-      text: "Don't be discouraged, you got this! Believing in you always 🌟"
-    },
-    {
-      id: 4,
-      text: "Your smile brightens everyone's day! Keep being wonderful 😊"
-    },
-    {
-      id: 5,
-      text: "You inspire me to be better every day. Thank you! 🙏"
+  const [messages, setMessages] = useState([]);
+  
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("/api/user/responses");
+        response.data.response.map((e) =>
+          setMessages((mes) => [
+            ...mes,
+            { id: `${e.nglResponse._id}`, text: `${e.nglResponse.response}` },
+          ])
+        );
+        // console.log(response.data.response)
+      } catch (error) {
+        console.log("Failed in fetching messages : ", error.message);
+      }
     }
-  ]);
-
+    fetchData()
+  }, []);
   const logout = async () => {
     try {
       await axios.get("/api/user/logout");
-      toast.success("Logout successfully")
-      router.push('/login');
+      toast.success("Logout successfully");
+      router.push("/login");
     } catch (error) {
       console.log("Error in LoggingOut", error);
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
     }
   };
 
@@ -84,9 +81,9 @@ export default function Home() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Send me anonymous messages!',
-          text: 'Share your thoughts with me anonymously',
-          url: `${window.location.origin}/nglresponse/${userId}`
+          title: "Send me anonymous messages!",
+          text: "Share your thoughts with me anonymously",
+          url: `${window.location.origin}/nglresponse/${userId}`,
         });
       } catch (error) {
         console.log("Error sharing", error);
@@ -95,7 +92,6 @@ export default function Home() {
       copyLink();
     }
   };
-
 
   useEffect(() => {
     getId();
@@ -106,9 +102,9 @@ export default function Home() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -118,17 +114,16 @@ export default function Home() {
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 100
-      }
-    }
+        stiffness: 100,
+      },
+    },
   };
 
   return (
     <div className="min-h-screen bg-white">
-      <Toaster/>
+      <Toaster />
       <Header />
-      
-      
+
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-end">
@@ -144,57 +139,54 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
-      <motion.div 
+
+      <motion.div
         className="container mx-auto px-4 py-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        
-        <motion.div 
-          className="text-center mb-12"
-          variants={itemVariants}
-        >
+        <motion.div className="text-center mb-12" variants={itemVariants}>
           <motion.div
             className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full px-6 py-3 mb-6 border border-blue-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-medium">Anonymous Messages</span>
+            <span className="text-blue-800 font-medium">
+              Anonymous Messages
+            </span>
           </motion.div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">
             Your NGL Link
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Share your link and receive honest, anonymous messages from friends and followers
+            Share your link and receive honest, anonymous messages from friends
+            and followers
           </p>
         </motion.div>
 
-        
-        <motion.div 
-          className="max-w-2xl mx-auto mb-12"
-          variants={itemVariants}
-        >
+        <motion.div className="max-w-2xl mx-auto mb-12" variants={itemVariants}>
           {userId ? (
-            <motion.div 
+            <motion.div
               className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 shadow-lg"
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               <div className="flex items-center gap-3 mb-4">
                 <LinkIcon className="w-6 h-6 text-blue-600" />
-                <h3 className="text-xl font-semibold text-gray-800">Your Anonymous Link</h3>
+                <h3 className="text-xl font-semibold text-gray-800">
+                  Your Anonymous Link
+                </h3>
               </div>
-              
+
               <div className="bg-white rounded-xl p-4 mb-4 border border-blue-100">
                 <code className="text-blue-700 text-sm break-all">
                   {`${window.location.origin}/nglresponse/${userId}`}
                 </code>
               </div>
-              
+
               <div className="flex gap-3">
                 <motion.button
                   onClick={copyLink}
@@ -205,7 +197,7 @@ export default function Home() {
                   <Copy className="w-4 h-4" />
                   {copiedLink ? "Copied!" : "Copy Link"}
                 </motion.button>
-                
+
                 <motion.button
                   onClick={shareLink}
                   className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-xl font-medium transition-colors shadow-md"
@@ -216,20 +208,22 @@ export default function Home() {
                   Share
                 </motion.button>
               </div>
-              
-              <motion.div 
+
+              <motion.div
                 className="mt-4 p-4 bg-blue-100 rounded-xl border border-blue-200"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
                 <p className="text-blue-800 text-sm">
-                  💡 <strong>Pro tip:</strong> Share this link on your social media stories, bio, or with friends to start receiving anonymous messages!
+                  💡 <strong>Pro tip:</strong> Share this link on your social
+                  media stories, bio, or with friends to start receiving
+                  anonymous messages!
                 </p>
               </motion.div>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 text-center border border-blue-200"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2 }}
@@ -247,22 +241,17 @@ export default function Home() {
           )}
         </motion.div>
 
-        
-        <motion.div 
-          className="max-w-4xl mx-auto"
-          variants={itemVariants}
-        >
+        <motion.div className="max-w-4xl mx-auto" variants={itemVariants}>
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <MessageCircle className="w-7 h-7 text-blue-600" />
-              <h2 className="text-3xl font-bold text-gray-800">Your Messages</h2>
+              <h2 className="text-3xl font-bold text-gray-800">
+                Your Messages
+              </h2>
             </div>
           </div>
 
-          <motion.div 
-            className="grid gap-4"
-            variants={containerVariants}
-          >
+          <motion.div className="grid gap-4" variants={containerVariants}>
             {messages.map((msg) => (
               <motion.div
                 key={msg.id}
@@ -294,7 +283,6 @@ export default function Home() {
         </motion.div>
       </motion.div>
 
-      
       <AnimatePresence>
         {selectedMessage && (
           <motion.div
@@ -317,7 +305,9 @@ export default function Home() {
                     💬
                   </div>
                   <div>
-                    <h3 className="text-gray-800 font-semibold">Anonymous Message</h3>
+                    <h3 className="text-gray-800 font-semibold">
+                      Anonymous Message
+                    </h3>
                   </div>
                 </div>
                 <motion.button
@@ -329,7 +319,7 @@ export default function Home() {
                   <X className="w-4 h-4" />
                 </motion.button>
               </div>
-              
+
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
                 <p className="text-gray-800 text-lg leading-relaxed">
                   {selectedMessage.text}
