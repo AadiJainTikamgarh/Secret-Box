@@ -18,6 +18,7 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import Head from 'next/head';
 
+
 const page = () => {
     const fadeInUp = {
         hidden: { opacity: 0, y: 30 },
@@ -74,7 +75,7 @@ const page = () => {
                         className="flex flex-col sm:flex-row gap-4 justify-center items-center"
                         variants={fadeInUp}
                     >
-                        <a href="/signup">
+                        <a href="/">
                             <motion.button
                                 className="px-8 py-4 bg-[#4212de] text-white rounded-xl font-semibold text-lg shadow-xl hover:from-[#3610c4] hover:to-blue-700 transition-all flex items-center space-x-2"
                                 whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(66, 18, 222, 0.3)" }}
@@ -352,7 +353,7 @@ const page = () => {
                     >
                         Join thousands of users who trust Secret Box for honest, anonymous communication.
                     </motion.p>
-                    <a href="/signup">
+                    <a href="/">
                         <motion.button
                             className="px-8 py-4 bg-white text-[#4212de] rounded-xl font-semibold text-lg shadow-xl hover:bg-gray-50 transition-all flex items-center space-x-2 mx-auto"
                             variants={fadeInUp}
