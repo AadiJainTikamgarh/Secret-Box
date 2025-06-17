@@ -17,7 +17,7 @@ const Form = () => {
 
   
   const SignWithGoogle = async () => {
-    signIn()
+    signIn('google')
     let { data: session } = useSession();
     if (session?.user.email) {
       try {
