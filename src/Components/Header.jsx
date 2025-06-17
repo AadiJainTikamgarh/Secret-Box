@@ -50,7 +50,7 @@ const Header = () => {
             <Link href="#team" className="  flex items-center gap-2">
               < RiTeamFill />Team
             </Link>
-            <Link href="/login" className="  flex items-center gap-2">
+            <Link href="/auth" className="  flex items-center gap-2">
               < RiLoginBoxFill />Login
             </Link>
             
