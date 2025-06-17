@@ -29,6 +29,7 @@ const Form = () => {
         const response = await axios.post("/api/user/signup", formData);
         toast.success("Signup Successfully");
         console.log("Signup successfull", response.data);
+        router.push("/home");
       } catch (error) {
         if (error.response) {
           const status = error.response.status;
@@ -54,6 +55,7 @@ const Form = () => {
         const response = await axios.post("/api/user/login", formData);
         toast.success("Login Successfully");
         console.log("Login succesful ", response.data);
+        router.push("/home");
       } catch (error) {
         if (error.status === 401) {
           toast.error("Invalid login credentials");
@@ -71,7 +73,7 @@ const Form = () => {
         console.log("Failed to send data", error.message);
       }
     }
-    router.push("/");
+    router.push("/home");
   };
 
   return (
