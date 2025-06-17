@@ -21,7 +21,8 @@ export async function POST(request){
 
         
         return NextResponse.json(
-            {message:"Message Deliverded successfully",success:true}
+            {message:"Message Deliverded successfully",success:true},
+            {status:200}
         )
     } catch (error) {
         return NextResponse.json(
