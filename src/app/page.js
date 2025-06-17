@@ -10,23 +10,24 @@ import {
   MessageCircle,
   Eye,
   X,
-  LogOut,
+
   Sparkles,
   Link as LinkIcon,
 } from "lucide-react";
-import Header from "@/Components/Header";
+import { LogOut } from "lucide-react";
+
 import Footer from "@/Components/Footer";
 import { Toaster, toast } from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter();
 
-  
+
   const [userId, setUserId] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [messages, setMessages] = useState([]);
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -122,24 +123,42 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       <Toaster />
-      <Header />
 
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+
+      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 border-b border-blue-200 sticky top-0 z-100">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-end">
-            <motion.button
-              onClick={logout}
-              className="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg font-medium transition-colors border border-red-200"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </motion.button>
+          <div className="flex justify-between items-center">
+            <div className="text-blue-600 text-2xl md:text-3xl font-semibold md:ml-5 md:font-bold">
+              Secret Box
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex items-center gap-2">
+              {/* Home Button for All Screens */}
+              <motion.button
+                onClick={() => window.location.href = '/home'}
+                className="inline-flex items-center gap-1 md:gap-2 bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 md:px-4 py-2 rounded-lg font-medium transition-colors border border-blue-200 text-sm md:text-base"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">Home</span>
+              </motion.button>
+
+              {/* Sign Out Button */}
+              <motion.button
+                onClick={logout}
+                className="inline-flex items-center gap-1 md:gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-3 md:px-4 py-2 rounded-lg font-medium transition-colors border border-red-200 text-sm md:text-base"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </motion.button>
+            </div>
           </div>
         </div>
       </div>
-
       <motion.div
         className="container mx-auto px-4 py-8"
         variants={containerVariants}

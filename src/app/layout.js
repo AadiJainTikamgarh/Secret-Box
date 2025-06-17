@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Secret Box",
-  description: "",
+  description: "A site to get and share the anonymous messages",
 };
 
 export default function RootLayout({ children }) {
