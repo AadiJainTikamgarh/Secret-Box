@@ -49,7 +49,7 @@ export default function Home() {
     try {
       await axios.get("/api/user/logout");
       toast.success("Logout successfully");
-      router.push("/login");
+      router.push("/home");
     } catch (error) {
       console.log("Error in LoggingOut", error);
       toast.error("Something went wrong");
