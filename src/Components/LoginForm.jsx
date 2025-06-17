@@ -9,6 +9,7 @@ import { Toaster, toast } from "react-hot-toast";
 
 const Form = () => {
   const router = useRouter();
+  const [isLoginForm, setLoginForm] = useState(true);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,36 +24,64 @@ const Form = () => {
   };
 
   const handleSubmit = async (e) => {
-    
-    try {
-      const response = await axios.post("/api/user/login", formData);
-      toast.success("Login Successfully")
-      console.log("Login succesful ", response.data);
-      router.push("/");
-    } catch (error) {
-      if(error.status === 401){
-        toast.error("Invalid login credentials")
-      }else if (error.status === 404){
-        toast("User not found", {
-          icon: "❗",
-        });
-      }else if(error.status === 403){
-        toast("Email and password required", {
-          icon: "❗"
-        });
-      }else{
-        toast.error("Something went wrong")
+    if (!isLoginForm) {
+      try {
+        const response = await axios.post("/api/user/signup", formData);
+        toast.success("Signup Successfully");
+        console.log("Signup successfull", response.data);
+      } catch (error) {
+        if (error.response) {
+          const status = error.response.status;
+          if (status === 400 || status === 422) {
+            toast("Email and password required", {
+              icon: "❗",
+            });
+          } else if (status === 401 || status === 409) {
+            toast("User already exists", {
+              icon: "❗",
+            });
+          } else {
+            toast.error("Something went wrong");
+          }
+        } else if (error.request) {
+          toast.error("Network error. Please check your connection.");
+        } else {
+          toast.error("Something went wrong");
+        }
       }
-      console.log("Failed to send data", error.message);
+    } else {
+      try {
+        const response = await axios.post("/api/user/login", formData);
+        toast.success("Login Successfully");
+        console.log("Login succesful ", response.data);
+      } catch (error) {
+        if (error.status === 401) {
+          toast.error("Invalid login credentials");
+        } else if (error.status === 404) {
+          toast("User not found", {
+            icon: "❗",
+          });
+        } else if (error.status === 403) {
+          toast("Email and password required", {
+            icon: "❗",
+          });
+        } else {
+          toast.error("Something went wrong");
+        }
+        console.log("Failed to send data", error.message);
+      }
     }
+    router.push("/");
   };
 
   return (
     <StyledWrapper>
-      <Toaster/>
+      <Toaster />
       <div className="card shadow-[0_0_15px_rgba(0,0,0,0.4)] overflow-x-hidden">
         <div className="form">
-          <div className="title text-center">Login</div>
+          <div className="title text-center">
+            {isLoginForm ? "Login" : "Signup"}
+          </div>
           <label className="label_input" htmlFor="email-input">
             Email
           </label>
@@ -91,7 +120,15 @@ const Form = () => {
             Submit
           </button>
 
-          <div className="text-lg">Dont't have an account. <a href="/signup" className="text-[#4212de] underline">SignUp</a></div>
+          <div className="text-lg">
+            {isLoginForm ? "Dont't have an account." : "Already have account. "}{" "}
+            <span
+              onClick={() => setLoginForm(!isLoginForm)}
+              className="text-blue-700 underline"
+            >
+              {isLoginForm ? "Signup" : "Login"}
+            </span>
+          </div>
         </div>
 
         <label className="avatar">
