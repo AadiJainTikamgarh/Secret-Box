@@ -73,7 +73,6 @@ const Form = () => {
         console.log("Failed to send data", error.message);
       }
     }
-    router.push("/home");
   };
 
   return (
