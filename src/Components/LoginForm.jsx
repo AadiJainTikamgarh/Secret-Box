@@ -20,7 +20,7 @@ const Form = () => {
   useEffect(() => {
     const checkSession = async () => {
       console.log("trying to login with Google");
-      console.log("Session data: ", session);
+      // console.log("Session data: ", session);
       if (session?.user.email) {
         try {
           const response = await axios.post("/api/user/login", {
@@ -28,7 +28,7 @@ const Form = () => {
             withGoogle: true,
           });
           toast.success("Login Successfully");
-          console.log("Login successful ", response.data);
+          // console.log("Login successful ", response.data);
           router.push("/home");
         } catch (error) {
           if (error.response) {
@@ -57,7 +57,7 @@ const Form = () => {
 
     checkSession();
   }, [session])
-  console.log(session)
+  // console.log(session)
 
   const SignWithGoogle = async () => {
     signIn('google')
@@ -77,7 +77,7 @@ const Form = () => {
       try {
         const response = await axios.post("/api/user/signup", formData);
         toast.success("Signup Successfully");
-        console.log("Signup successfull", response.data);
+        // console.log("Signup successfull", response.data);
         router.push("/home");
       } catch (error) {
         if (error.response) {
@@ -103,7 +103,7 @@ const Form = () => {
       try {
         const response = await axios.post("/api/user/login", formData);
         toast.success("Login Successfully");
-        console.log("Login succesful ", response.data);
+        // console.log("Login succesful ", response.data);
         router.push("/home");
       } catch (error) {
         if (error.status === 401) {

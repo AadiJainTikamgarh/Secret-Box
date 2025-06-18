@@ -41,7 +41,7 @@ const Page = ({ params }) => {
     };
 
     const handleButtonClick = (e) => {
-        console.log("Current message state.", message);
+        // console.log("Current message state.", message);
     };
 
     const containerVariants = {
