@@ -29,7 +29,7 @@ const Form = () => {
           });
           toast.success("Login Successfully");
           console.log("Login successful ", response.data);
-          router.push("/home");
+          router.push("/");
         } catch (error) {
           if (error.response) {
             const status = error.response.status;
