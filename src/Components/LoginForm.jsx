@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
@@ -14,43 +14,54 @@ const Form = () => {
     email: "",
     password: "",
   });
-
   
-  const SignWithGoogle = async () => {
-    signIn('google')
-    let { data: session } = useSession();
-    if (session?.user.email) {
-      try {
-        const response = await axios.post("/api/user/login", {
-          email: session.user.email,
-          withGoogle: true,
-        });
-        toast.success("Login Successfully");
-        console.log("Login successful ", response.data);
-        router.push("/");
-      } catch (error) {
-        if (error.response) {
-          const status = error.response.status;
-          if (status === 401) {
-            toast.error("Invalid login credentials");
-          } else if (status === 404) {
-            toast("User not found", {
-              icon: "❗",
-            });
-          } else if (status === 403) {
-            toast("Email and password required", {
-              icon: "❗",
-            });
+  let { data: session } = useSession();
+  // console.log(session)
+  useEffect(() => {
+    const checkSession = async () => {
+      console.log("trying to login with Google");
+      console.log("Session data: ", session);
+      if (session?.user.email) {
+        try {
+          const response = await axios.post("/api/user/login", {
+            email: session.user.email,
+            withGoogle: true,
+          });
+          toast.success("Login Successfully");
+          console.log("Login successful ", response.data);
+          router.push("/home");
+        } catch (error) {
+          if (error.response) {
+            const status = error.response.status;
+            if (status === 401) {
+              toast.error("Invalid login credentials");
+            } else if (status === 404) {
+              toast("User not found", {
+                icon: "❗",
+              });
+            } else if (status === 403) {
+              toast("Email and password required", {
+                icon: "❗",
+              });
+            } else {
+              toast.error("Something went wrong");
+            }
+          } else if (error.request) {
+            toast.error("Network error. Please check your connection.");
           } else {
             toast.error("Something went wrong");
           }
-        } else if (error.request) {
-          toast.error("Network error. Please check your connection.");
-        } else {
-          toast.error("Something went wrong");
         }
       }
     }
+
+    checkSession();
+  }, [session])
+  console.log(session)
+
+  const SignWithGoogle = async () => {
+    signIn('google')
+    console.log("Signing in with Google...");
   };
 
   const handleInputChange = (e) => {

@@ -18,6 +18,7 @@ import { HomeIcon, LogOut } from "lucide-react";
 
 import Footer from "@/Components/Footer";
 import { Toaster, toast } from "react-hot-toast";
+import { signOut } from "next-auth/react";
 
 export default function Home() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function Home() {
     fetchData()
   }, []);
   const logout = async () => {
+    signOut()
     try {
       await axios.get("/api/user/logout");
       toast.success("Logout successfully");
